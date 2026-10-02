@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trisha Food Delivery</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f7f7f7;
+  color:#222;
+}
+header{
+  background:#ff4b2b;
+  color:white;
+  padding:18px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0 0}
+
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:15px;
+}
+
+.search{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  margin:10px 0 15px;
+  font-size:16px;
+}
+
+.categories{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+.categories button{
+  border:0;
+  background:white;
+  padding:10px 15px;
+  border-radius:20px;
+  box-shadow:0 2px 8px #ddd;
+  white-space:nowrap;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  margin:12px 0;
+  box-shadow:0 2px 10px #ddd;
+}
+.card h3{margin:5px 0}
+.price{
+  font-size:18px;
+  font-weight:bold;
+  color:#ff4b2b;
+}
+.add{
+  background:#ff4b2b;
+  color:white;
+  border:0;
+  padding:10px 18px;
+  border-radius:8px;
+  float:right;
+}
+
+.cart{
+  background:#222;
+  color:white;
+  padding:16px;
+  border-radius:15px;
+  margin-top:20px;
+}
+.order{
+  width:100%;
+  background:#25d366;
+  color:white;
+  border:0;
+  padding:15px;
+  border-radius:10px;
+  font-size:17px;
+  margin-top:10px;
+}
+
+input,textarea{
+  width:100%;
+  padding:12px;
+  margin:7px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🍔 Trisha Food Delivery</h1>
+<p>Panipat Local Food Delivery 🛵</p>
+</header>
+
+<div class="container">
+
+<input class="search" id="search"
+placeholder="🔍 Search food..."
+onkeyup="searchFood()">
+
+<div class="categories">
+<button onclick="filterFood('all')">All</button>
+<button onclick="filterFood('Pizza')">🍕 Pizza</button>
+<button onclick="filterFood('Burger')">🍔 Burger</button>
+<button onclick="filterFood('Biryani')">🍛 Biryani</button>
+<button onclick="filterFood('Drinks')">🥤 Drinks</button>
+</div>
+
+<div id="foods">
+
+<div class="card food" data-name="Veg Pizza" data-category="Pizza">
+<h3>🍕 Veg Pizza</h3>
+<p>Fresh delicious veg pizza</p>
+<span class="price">₹199</span>
+<button class="add" onclick="addCart('Veg Pizza',199)">Add</button>
+</div>
+
+<div class="card food" data-name="Cheese Burger" data-category="Burger">
+<h3>🍔 Cheese Burger</h3>
+<p>Hot & tasty cheese burger</p>
+<span class="price">₹129</span>
+<button class="add" onclick="addCart('Cheese Burger',129)">Add</button>
+</div>
+
+<div class="card food" data-name="Chicken Biryani" data-category="Biryani">
+<h3>🍛 Chicken Biryani</h3>
+<p>Special biryani</p>
+<span class="price">₹249</span>
+<button class="add" onclick="addCart('Chicken Biryani',249)">Add</button>
+</div>
+
+<div class="card food" data-name="Cold Drink" data-category="Drinks">
+<h3>🥤 Cold Drink</h3>
+<p>Chilled soft drink</p>
+<span class="price">₹60</span>
+<button class="add" onclick="addCart('Cold Drink',60)">Add</button>
+</div>
+
+</div>
+
+<div class="cart">
+<h2>🛒 Your Cart</h2>
+<div id="cartItems">Cart is empty</div>
+<h3>Total: ₹<span id="total">0</span></h3>
+
+<input id="customerName" placeholder="Your Name">
+<input id="phone" placeholder="Mobile Number">
+<textarea id="address" placeholder="Delivery Address"></textarea>
+
+<button class="order" onclick="placeOrder()">
+📲 Order on WhatsApp
+</button>
+</div>
+
+</div>
+
+<footer>
+© 2026 Trisha Food Delivery • Panipat
+</footer>
+
+<script>
+let cart=[];
+let total=0;
+
+function addCart(name,price){
+  cart.push({name:name,price:price});
+  total+=price;
+  showCart();
+}
+
+function showCart(){
+  let box=document.getElementById("cartItems");
+
+  if(cart.length===0){
+    box.innerHTML="Cart is empty";
+  }else{
+    box.innerHTML=cart.map((item,i)=>
+      `<div>${i+1}. ${item.name} - ₹${item.price}</div>`
+    ).join("");
+  }
+
+  document.getElementById("total").innerText=total;
+}
+
+function filterFood(category){
+  document.querySelectorAll(".food").forEach(card=>{
+    if(category==="all" || card.dataset.category===category){
+      card.style.display="block";
+    }else{
+      card.style.display="none";
+    }
+  });
+}
+
+function searchFood(){
+  let text=document.getElementById("search").value.toLowerCase();
+
+  document.querySelectorAll(".food").forEach(card=>{
+    card.style.display=
+      card.dataset.name.toLowerCase().includes(text)
+      ? "block":"none";
+  });
+}
+
+function placeOrder(){
+
+  if(cart.length===0){
+    alert("Please add food to cart first.");
+    return;
+  }
+
+  let name=document.getElementById("customerName").value;
+  let phone=document.getElementById("phone").value;
+  let address=document.getElementById("address").value;
+
+  if(!name || !phone || !address){
+    alert("Please fill Name, Mobile and Address.");
+    return;
+  }
+
+  let items=cart.map(x=>x.name+" ₹"+x.price).join(", ");
+
+  let message=
+  "🍔 TRISHA FOOD DELIVERY%0A%0A"+
+  "Name: "+encodeURIComponent(name)+"%0A"+
+  "Mobile: "+encodeURIComponent(phone)+"%0A"+
+  "Address: "+encodeURIComponent(address)+"%0A"+
+  "Food: "+encodeURIComponent(items)+"%0A"+
+  "Total: ₹"+total;
+
+  alert("Order details ready. WhatsApp number abhi set karna baaki hai.");
+
+  // Yahan baad mein Trisha ka WhatsApp number add karenge.
+}
+</script>
+
+</body>
+</html>
